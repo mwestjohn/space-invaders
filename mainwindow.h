@@ -19,6 +19,13 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    QPixmap* background;
+    QPixmap* player;
+    QPixmap* bullet;
+    QPixmap* enemy;
+    QPixmap* enemyBullet;
+
+
 };
 
 #endif // MAINWINDOW_H
