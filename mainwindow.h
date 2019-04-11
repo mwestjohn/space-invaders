@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <QMediaPlayer>
 #include <QMediaPlaylist>
+#include "player.h"
+#include "enemy.h"
 
 namespace Ui {
 class MainWindow;

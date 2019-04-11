@@ -26,10 +26,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
-        mainwindow.cpp
+        mainwindow.cpp \
+    enemy.cpp \
+    player.cpp
 
 HEADERS += \
-        mainwindow.h
+        mainwindow.h \
+    enemy.h \
+    player.h
 
 FORMS += \
         mainwindow.ui
