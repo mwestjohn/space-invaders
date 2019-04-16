@@ -6,6 +6,13 @@
 #include <QMediaPlaylist>
 #include "player.h"
 #include "enemy.h"
+#include <QPaintEvent>
+#include <QKeyEvent>
+#include <iostream>
+#include <QDebug>
+#include <QTime>
+#include <QTimer>
+
 
 namespace Ui {
 class MainWindow;
@@ -18,14 +25,18 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+    QTimer *timer;
 
 private:
     Ui::MainWindow *ui;
     QPixmap* background;
-    QPixmap* player;
-    QPixmap* bullet;
-    QPixmap* enemy;
-    QPixmap* enemyBullet;
+    player* player_one;
+    int direction;
+
+protected:
+void paintEvent(QPaintEvent *e);
+void keyPressEvent(QKeyEvent *evt);
+void updateCoordinate();
 
 
 };

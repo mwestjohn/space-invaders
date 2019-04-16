@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/sprites">
+        <file>download.jpg</file>
+    </qresource>
+    <qresource prefix="/sounds"/>
+</RCC>
