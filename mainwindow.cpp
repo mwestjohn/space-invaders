@@ -16,6 +16,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     timer = new QTimer(this);
     connect(timer,SIGNAL(timeout()),this,SLOT(updateCoordinate()));
+    connect(timer,SIGNAL(timeout()),this,SLOT(playerShoot()));
 
 }
 
@@ -36,8 +37,11 @@ void MainWindow::paintEvent(QPaintEvent *e)
 
          painter.drawPixmap(player_one->playerX,player_one->playerY,50,50,*(player_one->getSprite()));
          update();
+
+         if(shoot==1){painter.drawEllipse(player_one->bulletX+20,player_one->bulletY,10,10);
 }
 
+}
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *evt)
@@ -50,8 +54,14 @@ void MainWindow::keyPressEvent(QKeyEvent *evt)
     } else if ((evt->key()==Qt::Key_Right || evt->key()==Qt::Key_D)) {
         direction=2;
         qDebug()<< "right";
-           } else if ((evt->key()==Qt::Key_Space)){
-        qDebug()<<"Shoot";
+           }
+    else if ((evt->key()==Qt::Key_Space)){
+        if(shoot==0){
+            qDebug()<<"Shoot";
+        shoot =1;
+        player_one->bulletX=player_one->playerX;
+        player_one->bulletY=player_one->playerY;
+}
     }
 
 }
@@ -65,6 +75,17 @@ void MainWindow::updateCoordinate()
 
 
     }
+
+void MainWindow::playerShoot()
+{
+    if(shoot==1){
+
+        if(player_one->bulletY>0){player_one->bulletY-=20;}
+        else {shoot=0;}
+    update();
+
+}
+}
 
 
 void MainWindow::on_titleStart_clicked()

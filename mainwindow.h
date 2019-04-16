@@ -27,12 +27,14 @@ public:
     ~MainWindow();
     QTimer *timer;
     bool gameStart=0;
+    bool shoot=0;
 
 private:
     Ui::MainWindow *ui;
     QPixmap* background;
     player* player_one;
     int direction =0;
+
 
 protected:
 void paintEvent(QPaintEvent *e);
@@ -45,6 +47,8 @@ void on_titleStart_clicked();
 void updateCoordinate();
 void on_titleControls_clicked();
 void on_controlsStart_clicked();
+void playerShoot();
+
 };
 
 #endif // MAINWINDOW_H

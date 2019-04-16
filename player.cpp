@@ -7,6 +7,7 @@ player::player()
     bullet = new QPixmap(":/.png");
 
 
+
 }
 
 QPixmap* player::getSprite(){
