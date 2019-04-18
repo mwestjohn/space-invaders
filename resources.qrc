@@ -2,5 +2,8 @@
     <qresource prefix="/sprites">
         <file>download.jpg</file>
     </qresource>
-    <qresource prefix="/sounds"/>
+    <qresource prefix="/sounds">
+        <file>ka-chow.mp3</file>
+        <file>taughthimthat.mp3</file>
+    </qresource>
 </RCC>

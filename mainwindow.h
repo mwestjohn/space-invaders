@@ -12,6 +12,7 @@
 #include <QDebug>
 #include <QTime>
 #include <QTimer>
+#include <QMediaPlaylist>
 
 
 namespace Ui {
@@ -28,11 +29,17 @@ public:
     QTimer *timer;
     bool gameStart=0;
     bool shoot=0;
+    void bulletSound();
+     QMediaPlayer* media = new QMediaPlayer();
+     QMediaPlaylist* playlist = new QMediaPlaylist;
+     int x = 50;
+     int y = 50;
 
 private:
     Ui::MainWindow *ui;
     QPixmap* background;
     player* player_one;
+    enemy* enemy;
     int direction =0;
 
 

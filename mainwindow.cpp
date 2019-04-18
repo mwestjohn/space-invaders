@@ -18,7 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(timer,SIGNAL(timeout()),this,SLOT(updateCoordinate()));
     connect(timer,SIGNAL(timeout()),this,SLOT(playerShoot()));
 
-}
+   }
 
 
 
@@ -26,6 +26,18 @@ MainWindow::~MainWindow()
 {
     delete ui;
     delete timer;
+    delete media;
+
+}
+
+void MainWindow::bulletSound()
+{
+
+       media->setMedia(QUrl("qrc:/sounds/ka-chow.mp3"));
+//        media->setMedia(QUrl("qrc:/sounds/taughthimthat.mp3"));
+
+        if(shoot==1){  media->play();}
+
 }
 
 void MainWindow::paintEvent(QPaintEvent *e)
@@ -35,14 +47,32 @@ void MainWindow::paintEvent(QPaintEvent *e)
     if(gameStart==1){
          painter.drawPixmap(0,0,800,600,*background);
 
+
          painter.drawPixmap(player_one->playerX,player_one->playerY,50,50,*(player_one->getSprite()));
          update();
 
+         for (int i = 0; i < 5;i++)
+         {for (int j = 0; j < 12;j++){
+
+             painter.setBrush(Qt::green);
+             painter.drawRect(x,y,20,20);
+             x+=35;
+
+         }
+             x=50;
+             y+=35;
+         }
+                x = 50;
+                y = 50;
+
+
          if(shoot==1){painter.drawEllipse(player_one->bulletX+20,player_one->bulletY,10,10);
-}
 
 }
 }
+
+
+}//end qPaint event
 
 void MainWindow::keyPressEvent(QKeyEvent *evt)
 {
@@ -61,6 +91,7 @@ void MainWindow::keyPressEvent(QKeyEvent *evt)
         shoot =1;
         player_one->bulletX=player_one->playerX;
         player_one->bulletY=player_one->playerY;
+        bulletSound();
 }
     }
 
@@ -77,8 +108,7 @@ void MainWindow::updateCoordinate()
     }
 
 void MainWindow::playerShoot()
-{
-    if(shoot==1){
+{     if(shoot==1){
 
         if(player_one->bulletY>0){player_one->bulletY-=20;}
         else {shoot=0;}
@@ -93,6 +123,8 @@ void MainWindow::on_titleStart_clicked()
     gameStart = 1;
     ui->stackedWidget->setCurrentIndex(2);
     timer->start(50);
+
+
 }
 
 void MainWindow::on_titleControls_clicked()
