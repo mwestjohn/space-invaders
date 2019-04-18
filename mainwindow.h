@@ -39,7 +39,8 @@ private:
     Ui::MainWindow *ui;
     QPixmap* background;
     player* player_one;
-    enemy* enemy;
+
+    enemy* enemy_one;
     int direction =0;
 
 

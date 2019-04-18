@@ -13,6 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :
     setFixedSize(800,600);
     background = new QPixmap(":/sprites/download.jpg");
     player_one = new player();
+    enemy_one = new enemy();
 
     timer = new QTimer(this);
     connect(timer,SIGNAL(timeout()),this,SLOT(updateCoordinate()));
@@ -51,11 +52,13 @@ void MainWindow::paintEvent(QPaintEvent *e)
          painter.drawPixmap(player_one->playerX,player_one->playerY,50,50,*(player_one->getSprite()));
          update();
 
+
+
          for (int i = 0; i < 5;i++)
          {for (int j = 0; j < 12;j++){
 
              painter.setBrush(Qt::green);
-             painter.drawRect(x,y,20,20);
+             painter.drawPixmap(x,y,50,50,*(enemy_one->enemySprite2));
              x+=35;
 
          }

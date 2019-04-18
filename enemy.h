@@ -9,7 +9,9 @@ public:
     int enemyX;
     int enemyY;
 
-    QPixmap* enemySprite;
+    QPixmap* enemySprite1;
+        QPixmap* enemySprite2;
+            QPixmap* enemySprite3;
     QPixmap* enemyBullet;
 
 };

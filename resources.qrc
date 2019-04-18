@@ -1,6 +1,9 @@
 <RCC>
     <qresource prefix="/sprites">
         <file>download.jpg</file>
+        <file>goomba-transparent-pixel-1.png</file>
+        <file>OctoRock-1.png (1).png</file>
+        <file>images.png</file>
     </qresource>
     <qresource prefix="/sounds">
         <file>ka-chow.mp3</file>
