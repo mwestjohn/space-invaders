@@ -39,3 +39,6 @@ FORMS += \
         mainwindow.ui
 
 RC_ICONS = spaceInvader.ico
+
+RESOURCES += \
+    resources.qrc
