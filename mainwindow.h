@@ -40,7 +40,7 @@ private:
     QPixmap* background;
     player* player_one;
 
-    enemy* enemy_one;
+    enemy* enemy_arr[55];
     int direction =0;
 
 
