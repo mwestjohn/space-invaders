@@ -31,6 +31,16 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(specialTimer,SIGNAL(timeout()),this,SLOT(specialMove()));
 
     setWindowTitle("Retro Game Invaders");
+
+    bg_music = new QMediaPlayer();
+    QMediaPlaylist* playlist = new QMediaPlaylist();
+    playlist->addMedia(QUrl("qrc:/music/memories.mp3"));
+    playlist->addMedia(QUrl("qrc:/music/epic.mp3"));
+    playlist->addMedia(QUrl("qrc:/music/onceagain.mp3"));
+    playlist->setPlaybackMode(QMediaPlaylist::Loop);
+    bg_music->setPlaylist(playlist);
+    bg_music->setVolume(50);
+    bg_music->play();
 }
 
 MainWindow::~MainWindow()
@@ -65,7 +75,7 @@ void MainWindow::paintEvent(QPaintEvent *e)
             }
         }
         if(shoot==1){
-            painter.drawEllipse(player_one->bulletX+20,player_one->bulletY,10,10);
+            painter.drawEllipse(player_one->bulletX,player_one->bulletY,10,10);
         }
         if(specialIsSpawned){
             painter.drawPixmap(bonus_enemy->getX(),bonus_enemy->getY(),50,25,*(bonus_enemy->getSprite()));
@@ -73,10 +83,13 @@ void MainWindow::paintEvent(QPaintEvent *e)
         for(int i = 0 ; i < 4 ; i++) {
             for(int j = 0 ; j < 8 ; j++) {
                 if(bunker[i][j]->getDamage() == 3) {
+                    painter.setPen(Qt::green);
                     painter.setBrush(Qt::green);
                 } else if(bunker[i][j]->getDamage() == 2) {
+                    painter.setPen(Qt::yellow);
                     painter.setBrush(Qt::yellow);
                 } else if(bunker[i][j]->getDamage() == 1) {
+                    painter.setPen(Qt::red);
                     painter.setBrush(Qt::red);
                 }
                 if(bunker[i][j]->getStatus()) {
@@ -102,7 +115,7 @@ void MainWindow::keyPressEvent(QKeyEvent *evt)
         else if ((evt->key()==Qt::Key_Space)){
             if(shoot==0){
                 shoot =1;
-                player_one->bulletX=player_one->playerX;
+                player_one->bulletX=player_one->playerX+17;
                 player_one->bulletY=player_one->playerY;
                 bulletSound();
             }
@@ -132,6 +145,7 @@ void MainWindow::playerShoot()
     if(shoot==1){
         if(player_one->bulletY>0){
             player_one->bulletY-=5;
+            checkPlayerBulletCollisionFort();
             checkPlayerBulletCollisionEnemy();
             checkPlayerBulletCollisionSpecial();
         } else {
@@ -178,6 +192,24 @@ void MainWindow::checkPlayerBulletCollisionSpecial() {
         QString scoreString = QString::number(score);
         scoreString = "Score: " + scoreString;
         scoreLabel->setText(scoreString);
+    }
+}
+
+void MainWindow::checkPlayerBulletCollisionFort() {
+    for(int i = 0 ; i < 4 ; i++) {
+        for(int j = 0 ; j < 8 ; j++) {
+            if(player_one->bulletX >= bunker[i][j]->getblock()->x()
+                    && player_one->bulletX <= (bunker[i][j]->getblock()->x() + bunker[i][j]->getblock()->width())
+                    && player_one->bulletY <= (bunker[i][j]->getblock()->y() + bunker[i][j]->getblock()->height())
+                    && player_one->bulletY >= bunker[i][j]->getblock()->y()
+                    && bunker[i][j]->getStatus()) {
+                bunker[i][j]->setDamage((bunker[i][j]->getDamage() - 1));
+                if(bunker[i][j]->getDamage() == 0) {
+                    bunker[i][j]->setStatus(false);
+                }
+                shoot = 0;
+            }
+        }
     }
 }
 
@@ -319,10 +351,18 @@ void MainWindow::generateSpecial(){
     QTime time = QTime::currentTime();
     qsrand((uint)time.msec());
 
-    int rand = (qrand() % 3000) + 1;
+    int rand = (qrand() % 5000) + 1;
 
     if(rand == 30) {
         spawnSpecial = true;
+    }
+    rand = (qrand() % 2);
+    specialDirection = rand;
+
+    if(specialDirection == 0) {
+        bonus_enemy->setX(0);
+    } else if(specialDirection == 1) {
+        bonus_enemy->setX(800);
     }
 }
 
@@ -334,21 +374,26 @@ void MainWindow::specialMove() {
             specialIsSpawned = true;
         }
     } else {
-        bonus_enemy->setX((bonus_enemy->getX() + 1));
-        if(bonus_enemy->getX() >= this->width()) {
-            specialIsSpawned = false;
-            bonus_enemy->setX(0);
+        if(specialDirection == 0) {
+            bonus_enemy->setX((bonus_enemy->getX() + 1));
+            if(bonus_enemy->getX() >= this->width()) {
+                specialIsSpawned = false;
+            }
+        } else if(specialDirection == 1) {
+            bonus_enemy->setX((bonus_enemy->getX() - 1));
+            if(bonus_enemy->getX() <= -50) {
+                specialIsSpawned = false;
+            }
         }
         update();
     }
 }
 
-
 void MainWindow::createForts() {
     int x = 0;
     int y = 450;
     for(int i = 0 ; i < 4 ; i++) {
-        int y = 450;
+        y = 450;
         if(i == 0) {
             x = 75;
         } else if(i == 1) {

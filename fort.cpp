@@ -36,3 +36,7 @@ QRect* fort::getblock() {
 bool fort::getStatus() {
     return isAlive;
 }
+
+void fort::setStatus(bool new_status) {
+    isAlive = new_status;
+}

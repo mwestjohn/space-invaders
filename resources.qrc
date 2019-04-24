@@ -12,4 +12,9 @@
         <file>ka-chow.mp3</file>
         <file>taughthimthat.mp3</file>
     </qresource>
+    <qresource prefix="/music">
+        <file>memories.mp3</file>
+        <file>epic.mp3</file>
+        <file>onceagain.mp3</file>
+    </qresource>
 </RCC>

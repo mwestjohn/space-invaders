@@ -14,6 +14,7 @@ public:
     void setDamage(int new_damage);
     QRect* getblock();
     bool getStatus();
+    void setStatus(bool new_status);
 
 private:
     QRect* block;

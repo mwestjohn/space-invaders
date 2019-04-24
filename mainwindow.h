@@ -13,7 +13,6 @@
 #include <QDebug>
 #include <QTime>
 #include <QTimer>
-#include <QMediaPlaylist>
 #include <QString>
 #include <QTime>
 #include <QLabel>
@@ -39,6 +38,7 @@ public:
     void createForts();
     void checkPlayerBulletCollisionEnemy();
     void checkPlayerBulletCollisionSpecial();
+    void checkPlayerBulletCollisionFort();
 
 private:
     Ui::MainWindow *ui;
@@ -55,6 +55,7 @@ private:
     bool specialIsSpawned;
     QMediaPlayer* media = new QMediaPlayer();
     QMediaPlaylist* playlist = new QMediaPlaylist;
+    QMediaPlayer* bg_music;
     int x = 50;
     int y = 50;
     int score;
@@ -64,6 +65,7 @@ private:
     enemy* bonus_enemy;
     QLabel *scoreLabel;
     fort* bunker[4][8];
+    int specialDirection;
 
 protected:
     void paintEvent(QPaintEvent *e);
