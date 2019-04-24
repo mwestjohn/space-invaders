@@ -11,6 +11,8 @@
     <qresource prefix="/sounds">
         <file>ka-chow.mp3</file>
         <file>taughthimthat.mp3</file>
+        <file>battleexplosion.wav</file>
+        <file>laser_gun_sound.mp3</file>
     </qresource>
     <qresource prefix="/music">
         <file>memories.mp3</file>

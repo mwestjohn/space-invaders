@@ -39,6 +39,9 @@ public:
     void checkPlayerBulletCollisionEnemy();
     void checkPlayerBulletCollisionSpecial();
     void checkPlayerBulletCollisionFort();
+    void checkEnemyBulletCollisionFort();
+    void checkEnemyBulletCollisionPlayer();
+    void enemyFire();
 
 private:
     Ui::MainWindow *ui;
@@ -48,7 +51,8 @@ private:
     int direction =0;
     QTimer *enemyTimer;
     QTimer *bulletTimer;
-    QTimer* specialTimer;
+    QTimer *specialTimer;
+    QTimer *enemyBulletTimer;
     bool gameStart=0;
     bool shoot=0;
     bool spawnSpecial;
@@ -66,6 +70,11 @@ private:
     QLabel *scoreLabel;
     fort* bunker[4][8];
     int specialDirection;
+    int enemyBulletsX[11];
+    int enemyBulletsY[11];
+    bool enemyShots[11];
+    int wave;
+    double playbackRate;
 
 protected:
     void paintEvent(QPaintEvent *e);
@@ -80,6 +89,7 @@ private slots:
     void on_overStart_clicked();
     void on_overTitle_clicked();
     void specialMove();
+    void enemiesShoot();
 };
 
 #endif // MAINWINDOW_H

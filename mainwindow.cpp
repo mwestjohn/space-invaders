@@ -26,12 +26,14 @@ MainWindow::MainWindow(QWidget *parent) :
     enemyTimer = new QTimer(this);
     bulletTimer = new QTimer(this);
     specialTimer = new QTimer(this);
+    enemyBulletTimer = new QTimer(this);
     connect(enemyTimer,SIGNAL(timeout()),this,SLOT(updateCoordinate()));
     connect(bulletTimer,SIGNAL(timeout()),this,SLOT(playerShoot()));
     connect(specialTimer,SIGNAL(timeout()),this,SLOT(specialMove()));
+    connect(enemyBulletTimer,SIGNAL(timeout()),this,SLOT(enemiesShoot()));
 
     setWindowTitle("Retro Game Invaders");
-
+    playbackRate = 1.0;
     bg_music = new QMediaPlayer();
     QMediaPlaylist* playlist = new QMediaPlaylist();
     playlist->addMedia(QUrl("qrc:/music/memories.mp3"));
@@ -40,6 +42,7 @@ MainWindow::MainWindow(QWidget *parent) :
     playlist->setPlaybackMode(QMediaPlaylist::Loop);
     bg_music->setPlaylist(playlist);
     bg_music->setVolume(50);
+    bg_music->setPlaybackRate(playbackRate);
     bg_music->play();
 }
 
@@ -53,8 +56,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::bulletSound()
 {
-    media->setMedia(QUrl("qrc:/sounds/ka-chow.mp3"));
-//    media->setMedia(QUrl("qrc:/sounds/taughthimthat.mp3"));
+    media->setMedia(QUrl("qrc:/sounds/laser_gun_sound.mp3"));
     if(shoot==1){
         media->play();
     }
@@ -97,6 +99,14 @@ void MainWindow::paintEvent(QPaintEvent *e)
                 }
             }
         }
+        for(int i = 0 ; i < 11 ; i++) {
+            if(enemyShots[i]) {
+                painter.setPen(Qt::red);
+                painter.setBrush(Qt::red);
+                qDebug() << enemyBulletsX[i] << " " << enemyBulletsY[i];
+                painter.drawEllipse(enemyBulletsX[i],enemyBulletsY[i],10,10);
+            }
+        }
     }
 }//end paintEvent
 
@@ -127,6 +137,7 @@ void MainWindow::keyPressEvent(QKeyEvent *evt)
 void MainWindow::updateCoordinate()
 {
     moveEnemies();
+    enemyFire();
     if(gameStart == 0) {
         bulletTimer->stop();
         enemyTimer->stop();
@@ -161,14 +172,16 @@ void MainWindow::playerShoot()
 void MainWindow::checkPlayerBulletCollisionEnemy() {
     for(int j = 4 ; j >= 0 ; j--) {
         for(int i = 0 ; i < 11 ; i++) {
-            if(player_one->bulletX >= enemy_arr[i][j]->getX() && player_one->bulletX <= enemy_arr[i][j]->getX()+25
+            if(player_one->bulletX + 5 >= enemy_arr[i][j]->getX() && player_one->bulletX + 5 <= enemy_arr[i][j]->getX()+25
                     && player_one->bulletY <= (enemy_arr[i][j]->getY()+25) && player_one->bulletY >= enemy_arr[i][j]->getY()
                     && !(enemy_arr[i][j]->getStatus())) {
                 score += enemy_arr[i][j]->getScore();
                 enemy_arr[i][j]->setStatus(true);
                 enemies_left--;
                 enemy_speed -= 10;
+                playbackRate += 0.005;
                 enemyTimer->start(enemy_speed);
+                bg_music->setPlaybackRate(playbackRate);
                 shoot = 0;
                 scoreLabel = findChild<QLabel*>("gameScore");
                 QString scoreString = QString::number(score);
@@ -180,7 +193,7 @@ void MainWindow::checkPlayerBulletCollisionEnemy() {
 }
 
 void MainWindow::checkPlayerBulletCollisionSpecial() {
-    if(player_one->bulletX >= bonus_enemy->getX() && player_one->bulletX <= bonus_enemy->getX()+25
+    if(player_one->bulletX + 5 >= bonus_enemy->getX() && player_one->bulletX + 5 <= bonus_enemy->getX()+25
             && player_one->bulletY <= (bonus_enemy->getY()+25) && player_one->bulletY >= bonus_enemy->getY()
             && !(bonus_enemy->getStatus())) {
         score += bonus_enemy->getScore();
@@ -198,10 +211,10 @@ void MainWindow::checkPlayerBulletCollisionSpecial() {
 void MainWindow::checkPlayerBulletCollisionFort() {
     for(int i = 0 ; i < 4 ; i++) {
         for(int j = 0 ; j < 8 ; j++) {
-            if(player_one->bulletX >= bunker[i][j]->getblock()->x()
-                    && player_one->bulletX <= (bunker[i][j]->getblock()->x() + bunker[i][j]->getblock()->width())
-                    && player_one->bulletY <= (bunker[i][j]->getblock()->y() + bunker[i][j]->getblock()->height())
-                    && player_one->bulletY >= bunker[i][j]->getblock()->y()
+            if(player_one->bulletX >= bunker[i][j]->getblock()->left()
+                    && player_one->bulletX <= (bunker[i][j]->getblock()->right())
+                    && player_one->bulletY <= (bunker[i][j]->getblock()->bottom())
+                    && player_one->bulletY >= bunker[i][j]->getblock()->top()
                     && bunker[i][j]->getStatus()) {
                 bunker[i][j]->setDamage((bunker[i][j]->getDamage() - 1));
                 if(bunker[i][j]->getDamage() == 0) {
@@ -221,6 +234,7 @@ void MainWindow::startGame() {
     enemyTimer->start(enemy_speed);
     bulletTimer->start(6);
     specialTimer->start(7);
+    enemyBulletTimer->start(6);
     spawnEnemies();
     createForts();
     enemies_left = 55;
@@ -232,6 +246,7 @@ void MainWindow::startGame() {
     scoreString = QString::number(lives);
     scoreString = "Lives: " + scoreString;
     scoreLabel->setText(scoreString);
+    wave = 1;
 }
 
 void MainWindow::on_titleStart_clicked()
@@ -281,6 +296,9 @@ void MainWindow::spawnEnemies(){
             }
             enemy_arr[i][j] = new enemy(enemy_x,enemy_y,enemy_sprite,bullet,score, false);
         }
+        enemyBulletsX[i] = enemy_x+7;
+        enemyBulletsY[i] = enemy_y+25;
+        enemyShots[i] = false;
     }
 }
 
@@ -293,8 +311,17 @@ void MainWindow::resetEnemies() {
         }
     }
     enemies_left = 55;
-    enemy_speed = 1000;
     direction = 0;
+    wave += 1;
+    enemy_speed = 1000 - (5 * wave);
+    enemyTimer->start(enemy_speed);
+    lives++;
+    scoreLabel = findChild<QLabel*>("gameLives");
+    QString scoreString = QString::number(lives);
+    scoreString = "Lives: " + scoreString;
+    scoreLabel->setText(scoreString);
+    playbackRate = 1.0;
+    bg_music->setPlaybackRate(playbackRate);
 }
 
 void MainWindow::moveEnemies(){
@@ -415,6 +442,98 @@ void MainWindow::createForts() {
                 y = 450;
             }
             bunker[i][j] = new fort(x,y,25,25);
+        }
+    }
+}
+
+void MainWindow::enemyFire() {
+    QTime time = QTime::currentTime();
+    qsrand((uint)time.msec());
+
+    int rand = qrand()%3;
+
+    if(rand == 0) {
+        rand = qrand() % 11;
+        if(!enemyShots[rand]){
+            if(!(enemy_arr[rand][4]->getStatus())){
+                enemyBulletsX[rand] = (enemy_arr[rand][4]->getX()+7);
+                enemyBulletsY[rand] = (enemy_arr[rand][4]->getY()+25);
+                enemyShots[rand] = true;
+            } else if(!(enemy_arr[rand][3]->getStatus())){
+                enemyBulletsX[rand] = (enemy_arr[rand][3]->getX()+7);
+                enemyBulletsY[rand] = (enemy_arr[rand][3]->getY()+25);
+                enemyShots[rand] = true;
+            } else if(!(enemy_arr[rand][2]->getStatus())){
+                enemyBulletsX[rand] = (enemy_arr[rand][2]->getX()+7);
+                enemyBulletsY[rand] = (enemy_arr[rand][2]->getY()+25);
+                enemyShots[rand] = true;
+            } else if(!(enemy_arr[rand][1]->getStatus())){
+                enemyBulletsX[rand] = (enemy_arr[rand][1]->getX()+7);
+                enemyBulletsY[rand] = (enemy_arr[rand][1]->getY()+25);
+                enemyShots[rand] = true;
+            } else if(!(enemy_arr[rand][0]->getStatus())){
+                enemyBulletsX[rand] = (enemy_arr[rand][0]->getX()+7);
+                enemyBulletsY[rand] = (enemy_arr[rand][0]->getY()+25);
+                enemyShots[rand] = true;
+            }
+        }
+    }
+}
+
+void MainWindow::enemiesShoot() {
+    for(int i = 0 ; i < 11 ; i++) {
+        if(enemyShots[i]) {
+            enemyBulletsY[i]+=5;
+            checkEnemyBulletCollisionFort();
+            checkEnemyBulletCollisionPlayer();
+            if(enemyBulletsY[i] >= 600) {
+                enemyShots[i] = false;
+            }
+            update();
+        }
+    }
+}
+
+void MainWindow::checkEnemyBulletCollisionFort() {
+    for(int k = 0 ; k < 11 ; k++) {
+        if(enemyShots[k]) {
+            for(int i = 0 ; i < 4 ; i++) {
+                for(int j = 0 ; j < 8 ; j++) {
+                    if((enemyBulletsX[k]+5) >= bunker[i][j]->getblock()->left()
+                            && (enemyBulletsX[k]+5) <= (bunker[i][j]->getblock()->right())
+                            && (enemyBulletsY[k]+10) <= (bunker[i][j]->getblock()->bottom())
+                            && (enemyBulletsY[k]+10) >= bunker[i][j]->getblock()->top()
+                            && bunker[i][j]->getStatus()) {
+                        bunker[i][j]->setDamage((bunker[i][j]->getDamage() - 1));
+                        if(bunker[i][j]->getDamage() == 0) {
+                            bunker[i][j]->setStatus(false);
+                        }
+                        enemyShots[k] = false;
+                    }
+                }
+            }
+        }
+    }
+}
+
+void MainWindow::checkEnemyBulletCollisionPlayer() {
+    for(int i = 0; i < 11 ; i++) {
+        if((enemyBulletsX[i] + 5) >= player_one->playerX
+                && (enemyBulletsX[i] + 5) <= (player_one->playerX + 35)
+                && (enemyBulletsY[i] + 10) >= player_one->playerY
+                && (enemyBulletsY[i] + 10) <= (player_one->playerY + 50)
+                && enemyShots[i]) {
+            lives--;
+            media->setMedia(QUrl("qrc:/sounds/battleexplosion.wav"));
+            media->play();
+            scoreLabel = findChild<QLabel*>("gameLives");
+            QString scoreString = QString::number(lives);
+            scoreString = "Lives: " + scoreString;
+            scoreLabel->setText(scoreString);
+            if(lives == 0) {
+                gameStart = 0;
+            }
+            enemyShots[i] = false;
         }
     }
 }
