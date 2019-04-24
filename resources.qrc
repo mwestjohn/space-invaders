@@ -6,6 +6,7 @@
         <file>bullet.png</file>
         <file>OctoRock.png</file>
         <file>bee.png</file>
+        <file>pacmanghost.png</file>
     </qresource>
     <qresource prefix="/sounds">
         <file>ka-chow.mp3</file>

@@ -28,12 +28,14 @@ SOURCES += \
         main.cpp \
         mainwindow.cpp \
     enemy.cpp \
-    player.cpp
+    player.cpp \
+    fort.cpp
 
 HEADERS += \
         mainwindow.h \
     enemy.h \
-    player.h
+    player.h \
+    fort.h
 
 FORMS += \
         mainwindow.ui

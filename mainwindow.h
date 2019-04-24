@@ -6,6 +6,7 @@
 #include <QMediaPlaylist>
 #include "player.h"
 #include "enemy.h"
+#include "fort.h"
 #include <QPaintEvent>
 #include <QKeyEvent>
 #include <iostream>
@@ -14,6 +15,8 @@
 #include <QTimer>
 #include <QMediaPlaylist>
 #include <QString>
+#include <QTime>
+#include <QLabel>
 
 
 namespace Ui {
@@ -32,6 +35,10 @@ public:
     void moveEnemies();
     void resetEnemies();
     void startGame();
+    void generateSpecial();
+    void createForts();
+    void checkPlayerBulletCollisionEnemy();
+    void checkPlayerBulletCollisionSpecial();
 
 private:
     Ui::MainWindow *ui;
@@ -41,8 +48,11 @@ private:
     int direction =0;
     QTimer *enemyTimer;
     QTimer *bulletTimer;
+    QTimer* specialTimer;
     bool gameStart=0;
     bool shoot=0;
+    bool spawnSpecial;
+    bool specialIsSpawned;
     QMediaPlayer* media = new QMediaPlayer();
     QMediaPlaylist* playlist = new QMediaPlaylist;
     int x = 50;
@@ -51,6 +61,9 @@ private:
     int enemies_left;
     int enemy_speed;
     int lives;
+    enemy* bonus_enemy;
+    QLabel *scoreLabel;
+    fort* bunker[4][8];
 
 protected:
     void paintEvent(QPaintEvent *e);
@@ -62,9 +75,9 @@ private slots:
     void on_titleControls_clicked();
     void on_controlsStart_clicked();
     void playerShoot();
-
     void on_overStart_clicked();
     void on_overTitle_clicked();
+    void specialMove();
 };
 
 #endif // MAINWINDOW_H
