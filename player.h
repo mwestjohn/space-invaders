@@ -8,15 +8,15 @@ class player
 {
 public:
     player();
-    QPixmap* playerSprite;
-    QPixmap* bullet;
     int playerX = 300;
     int playerY = 550;
     int bulletX;
     int bulletY = 550;
     QPixmap* getSprite();
 
-
+private:
+    QPixmap* playerSprite;
+    QPixmap* bullet;
 
 
 

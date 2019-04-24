@@ -2,17 +2,17 @@
 
 enemy::enemy()
 {
-    enemySprite = new QPixmap(":/sprites/images.png");
+    enemySprite = new QPixmap(":/sprites/goomba.png");
     enemyBullet = new QPixmap(":/.png");
-
 }
 
-enemy::enemy(int x, int y, QPixmap* sprite, QPixmap* bullet, int score_worth) {
+enemy::enemy(int x, int y, QPixmap* sprite, QPixmap* bullet, int score_worth, bool dead) {
     enemyX = x;
     enemyY = y;
-    enemySprite = sprite;
-    enemyBullet = bullet;
+    enemySprite = new QPixmap(*sprite);
+    enemyBullet = new QPixmap(*bullet);
     score = score_worth;
+    isDead = dead;
 }
 
 int enemy::getX() {
@@ -26,7 +26,7 @@ int enemy::getY() {
 int enemy::getScore() {
     return score;
 }
-\
+
 QPixmap* enemy::getSprite() {
     return enemySprite;
 }
@@ -35,14 +35,18 @@ QPixmap* enemy::getBullet() {
     return enemyBullet;
 }
 
-void enemy::setPixmap(QPixmap* sprite) {
-    enemySprite = sprite;
-}
-
 void enemy::setX(int x) {
     enemyX = x;
 }
 
 void enemy::setY(int y) {
     enemyY = y;
+}
+
+bool enemy::getStatus() {
+    return isDead;
+}
+
+void enemy::setStatus(bool status){
+    isDead = status;
 }

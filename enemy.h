@@ -6,7 +6,7 @@ class enemy
 {
 public:
     enemy();
-    enemy(int x, int y, QPixmap* sprite, QPixmap* bullet, int score_worth);
+    enemy(int x, int y, QPixmap* sprite, QPixmap* bullet, int score_worth, bool dead);
     int getX();
     int getY();
     int getScore();
@@ -15,6 +15,8 @@ public:
     QPixmap* getSprite();
     QPixmap* getBullet();
     void setPixmap(QPixmap* sprite);
+    bool getStatus();
+    void setStatus(bool status);
 
 private:
     int enemyX;
@@ -22,6 +24,7 @@ private:
     QPixmap* enemySprite;
     QPixmap* enemyBullet;
     int score;
+    bool isDead;
 };
 
 #endif // ENEMY_H
